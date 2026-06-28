@@ -58,6 +58,41 @@ db.connect((err) => {
       } else {
         console.log("Feedback table ready");
 
+        // Ensure likes/dislikes columns exist for vote counts
+        const checkLikesColumns = `
+          SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_NAME = 'feedback' AND COLUMN_NAME IN ('likes','dislikes') AND TABLE_SCHEMA = DATABASE()
+        `;
+        db.query(checkLikesColumns, (err, result) => {
+          if (err) {
+            console.log("Error checking feedback columns", err);
+            return;
+          }
+
+          const existingColumns = result.map((row) => row.COLUMN_NAME);
+          const alterClauses = [];
+          if (!existingColumns.includes("likes")) {
+            alterClauses.push("ADD COLUMN likes INT DEFAULT 0");
+          }
+          if (!existingColumns.includes("dislikes")) {
+            alterClauses.push("ADD COLUMN dislikes INT DEFAULT 0");
+          }
+
+          if (alterClauses.length > 0) {
+            const alterTableQuery = `ALTER TABLE feedback ${alterClauses.join(", ")}`;
+            db.query(alterTableQuery, (err) => {
+              if (err) {
+                console.log(
+                  "Could not add likes/dislikes columns to feedback table",
+                  err,
+                );
+              } else {
+                console.log("Added likes/dislikes columns to feedback table");
+              }
+            });
+          }
+        });
+
         // Check if rating column exists and remove it if needed (migration)
         const checkRatingColumn = `
           SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 

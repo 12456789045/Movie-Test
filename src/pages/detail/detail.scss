@@ -92,6 +92,36 @@
     .overview {
       letter-spacing: 0.5px;
     }
+
+    .movie-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+
+      .btn,
+      .watchlist-btn,
+      .play-trailer-btn {
+        height: 40px;
+        padding: 0 1rem;
+        font-size: 0.95rem;
+        min-width: 120px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .play-trailer-btn {
+        background: $main-color;
+        color: #fff;
+        border: 1px solid darken($main-color, 6%);
+        border-radius: 999px; // fully rounded pill
+      }
+
+      .watchlist-btn {
+        border-radius: 8px; // slightly rounded rectangle
+      }
+    }
   }
 }
 

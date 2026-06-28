@@ -26,18 +26,46 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-container">
+    <div
+      className="auth-container"
+      style={{
+        backgroundImage: `url('/movies-background.png')`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <form onSubmit={register} className="auth-form">
+        <div className="auth-logo-card">
+          <img src="/mic-logo.png" alt="MIC Logo" className="auth-logo" />
+        </div>
         <h2>Register</h2>
+        <p className="auth-subtitle">
+          Create your account and start saving your favorite movies.
+        </p>
 
-        <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
+        <input
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
 
-        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
         <input
           type="password"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
         <button type="submit">Register</button>

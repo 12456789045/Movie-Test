@@ -49,3 +49,32 @@
     transform: translateY(0);
   }
 }
+
+/* Fullscreen trailer modal: remove padding and make iframe fill viewport */
+#detail_trailer_modal {
+  .modal__content {
+    padding: 0 !important;
+    background-color: transparent !important;
+    width: 100% !important;
+    height: 100vh !important;
+    max-width: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .modal__content iframe {
+    border: none !important;
+    display: block;
+    width: 100% !important;
+    height: 100vh !important;
+  }
+
+  /* ensure close button remains visible in full view */
+  .modal__content__close {
+    right: 16px;
+    top: 16px;
+    z-index: 101;
+    color: #fff;
+  }
+}

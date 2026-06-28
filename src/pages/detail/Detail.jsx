@@ -4,6 +4,9 @@ import { useParams } from "react-router";
 import tmdbApi from "./../../api/tmdbApi";
 import apiConfig from "../../api/apiConfig";
 
+import Button from "../../components/button/Button";
+import Modal, { ModalContent } from "../../components/modal/Modal";
+
 import "./detail.scss";
 import CastList from "./CastList";
 import VideoList from "./VideoList";
@@ -15,6 +18,8 @@ const Detail = () => {
   const { category, id } = useParams();
 
   const [item, setItem] = useState(null);
+  const [trailerSrc, setTrailerSrc] = useState("");
+  const [trailerActive, setTrailerActive] = useState(false);
 
   useEffect(() => {
     const getDetail = async () => {
@@ -24,6 +29,22 @@ const Detail = () => {
     };
     getDetail();
   }, [category, id]);
+
+  const openTrailer = async () => {
+    if (!item) return;
+    const videos = await tmdbApi.getVideos(category, item.id);
+    if (videos.results.length > 0) {
+      setTrailerSrc("https://www.youtube.com/embed/" + videos.results[0].key + "?autoplay=1");
+      setTrailerActive(true);
+    } else {
+      alert("Trailer not available");
+    }
+  };
+
+  const closeTrailer = () => {
+    setTrailerSrc("");
+    setTrailerActive(false);
+  };
 
   return (
     <>
@@ -62,12 +83,16 @@ const Detail = () => {
               </div>
               <p className="overview">{item.overview}</p>
               
-              {/* Add to Watchlist Button */}
-              <WatchlistSection 
-                movieId={item.id}
-                movieTitle={item.title || item.name}
-                moviePoster={item.poster_path}
-              />
+              <div className="movie-actions">
+                <Button className="play-trailer-btn compact" onClick={openTrailer}>
+                  Play Trailer
+                </Button>
+                <WatchlistSection
+                  movieId={item.id}
+                  movieTitle={item.title || item.name}
+                  moviePoster={item.poster_path}
+                />
+              </div>
               
               <div className="cast">
                 <div className="section__header">
@@ -83,6 +108,20 @@ const Detail = () => {
             <div className="section mb-3">
               <VideoList id={item.id} />
             </div>
+
+            <Modal active={trailerActive} id="detail_trailer_modal">
+              <ModalContent onClose={closeTrailer}>
+                <iframe
+                  width="100%"
+                  height="500px"
+                  title="trailer"
+                  src={trailerSrc}
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                ></iframe>
+              </ModalContent>
+            </Modal>
             <div className="section mb-3">
               <div className="section__header mb-2">
                 <h2>Similar</h2>

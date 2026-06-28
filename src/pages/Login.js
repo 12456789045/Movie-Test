@@ -26,17 +26,32 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
+    <div
+      className="auth-container"
+      style={{
+        backgroundImage: `url('/movies-background.png')`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <form onSubmit={login} className="auth-form">
+        <div className="auth-logo-card">
+          <img src="/mic-logo.png" alt="MIC Logo" className="auth-logo" />
+        </div>
         <h2>Login</h2>
+        <p className="auth-subtitle">
+          Welcome back. Enter your login name and password.
+        </p>
 
         {error && (
-          <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
+          <div style={{ color: "#ff4d4d", marginBottom: "15px" }}>{error}</div>
         )}
 
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Login Name"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

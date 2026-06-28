@@ -9,7 +9,8 @@ const FeedbackSection = ({ movieId }) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [userVotes, setUserVotes] = useState({}); // Track user votes
-  const [error, setError] = useState("");
+  const [fetchError, setFetchError] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -37,9 +38,10 @@ const FeedbackSection = ({ movieId }) => {
         `http://localhost:5000/feedback/${movieId}`
       );
       setFeedbacks(res.data);
+      setFetchError("");
     } catch (err) {
       console.log("Error fetching feedbacks", err);
-      setError("Error loading reviews");
+      setFetchError("Error loading reviews");
     }
   };
 
@@ -64,17 +66,17 @@ const FeedbackSection = ({ movieId }) => {
     e.preventDefault();
 
     if (!user) {
-      setError("Please login to submit feedback");
+      setSubmitError("Please login to submit feedback");
       return;
     }
 
     if (!comment.trim()) {
-      setError("Please enter a comment");
+      setSubmitError("Please enter a comment");
       return;
     }
 
     setLoading(true);
-    setError("");
+    setSubmitError("");
 
     try {
       const response = await axios.post("http://localhost:5000/add-feedback", {
@@ -113,7 +115,7 @@ const FeedbackSection = ({ movieId }) => {
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || "Error submitting feedback";
-      setError(errorMessage);
+      setSubmitError(errorMessage);
       console.log("Error submitting feedback", err);
     } finally {
       setLoading(false);
@@ -122,7 +124,7 @@ const FeedbackSection = ({ movieId }) => {
 
   const handleVote = async (feedbackId, voteType) => {
     if (!user) {
-      setError("Please login to vote");
+      setSubmitError("Please login to vote");
       return;
     }
 
@@ -141,7 +143,7 @@ const FeedbackSection = ({ movieId }) => {
       fetchFeedbacks(); // Refresh feedback to get updated vote counts
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Error voting on feedback";
-      setError(errorMessage);
+      setSubmitError(errorMessage);
       console.log("Error voting on feedback", err);
     }
   };
@@ -150,6 +152,12 @@ const FeedbackSection = ({ movieId }) => {
     <div className="feedback-section">
       <div className="feedback-container">
         <h2>User Reviews & Feedback</h2>
+
+        {fetchError && (
+          <div className="error-message">
+            {fetchError}
+          </div>
+        )}
 
         {/* Add Feedback Form - Only show for logged in users */}
         {user && (
@@ -164,7 +172,7 @@ const FeedbackSection = ({ movieId }) => {
                   value={comment}
                   onChange={(e) => {
                     setComment(e.target.value);
-                    setError("");
+                    setSubmitError("");
                   }}
                   rows="4"
                 />
@@ -178,9 +186,9 @@ const FeedbackSection = ({ movieId }) => {
                 {loading ? "Submitting..." : "Submit Review"}
               </button>
 
-              {error && (
+              {submitError && (
                 <div className="error-message">
-                  {error}
+                  {submitError}
                 </div>
               )}
 
