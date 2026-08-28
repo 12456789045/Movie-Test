@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./feedback.scss";
 
@@ -12,27 +12,7 @@ const FeedbackSection = ({ movieId }) => {
   const [fetchError, setFetchError] = useState("");
   const [submitError, setSubmitError] = useState("");
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFeedbacks();
-  }, [movieId]); // Remove user dependency to ensure feedback loads for all users
-
-  // Separate effect for fetching user votes when user logs in
-  useEffect(() => {
-    if (user) {
-      fetchUserVotes();
-    } else {
-      setUserVotes({}); // Clear votes for logged out users
-    }
-  }, [user, feedbacks]); // Re-fetch votes when user changes or feedbacks change
-
-  const fetchFeedbacks = async () => {
+  const fetchFeedbacks = useCallback(async () => {
     try {
       const res = await axios.get(
         `http://localhost:5000/feedback/${movieId}`
@@ -43,9 +23,9 @@ const FeedbackSection = ({ movieId }) => {
       console.log("Error fetching feedbacks", err);
       setFetchError("Error loading reviews");
     }
-  };
+  }, [movieId]);
 
-  const fetchUserVotes = async () => {
+  const fetchUserVotes = useCallback(async () => {
     if (!user) return;
 
     const votes = {};
@@ -60,7 +40,27 @@ const FeedbackSection = ({ movieId }) => {
       }
     }
     setUserVotes(votes);
-  };
+  }, [user, feedbacks]);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFeedbacks();
+  }, [movieId, fetchFeedbacks]); // Remove user dependency to ensure feedback loads for all users
+
+  // Separate effect for fetching user votes when user logs in
+  useEffect(() => {
+    if (user) {
+      fetchUserVotes();
+    } else {
+      setUserVotes({}); // Clear votes for logged out users
+    }
+  }, [user, feedbacks, fetchUserVotes]); // Re-fetch votes when user changes or feedbacks change
 
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();

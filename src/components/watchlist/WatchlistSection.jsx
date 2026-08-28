@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./watchlist.scss";
 
@@ -7,24 +7,24 @@ const WatchlistSection = ({ movieId, movieTitle, moviePoster }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const checkWatchlist = useCallback(async (userId) => {
+    try {
+      const res = await axios.get(
+        `/api/watchlist-check/${userId}/${movieId}`
+      );
+      setInWatchlist(res.data.inWatchlist);
+    } catch (err) {
+      console.log("Error checking watchlist", err);
+    }
+  }, [movieId]);
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
       checkWatchlist(JSON.parse(userData).id);
     }
-  }, [movieId]);
-
-  const checkWatchlist = async (userId) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/watchlist-check/${userId}/${movieId}`
-      );
-      setInWatchlist(res.data.inWatchlist);
-    } catch (err) {
-      console.log("Error checking watchlist", err);
-    }
-  };
+  }, [movieId, checkWatchlist]);
 
   const handleWatchlistToggle = async () => {
     if (!user) {
@@ -36,12 +36,12 @@ const WatchlistSection = ({ movieId, movieTitle, moviePoster }) => {
 
     try {
       if (inWatchlist) {
-        await axios.post("http://localhost:5000/remove-watchlist", {
+        await axios.post("/api/remove-watchlist", {
           user_id: user.id,
           movie_id: movieId,
         });
       } else {
-        await axios.post("http://localhost:5000/add-watchlist", {
+        await axios.post("/api/add-watchlist", {
           user_id: user.id,
           movie_id: movieId,
           movie_title: movieTitle,

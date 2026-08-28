@@ -4,6 +4,8 @@
   "private": true,
   "homepage": "http://localhost:3000",
   "dependencies": {
+    "@netlify/database": "^2.0.0",
+    "@netlify/functions": "^6.0.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -11,6 +13,7 @@
     "axios": "^0.23.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
+    "drizzle-orm": "^1.0.0-beta.22",
     "express": "^5.2.1",
     "gh-pages": "^3.2.3",
     "jsonwebtoken": "^9.0.3",
@@ -54,5 +57,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "drizzle-kit": "^1.0.0-beta.22"
+  }
 }

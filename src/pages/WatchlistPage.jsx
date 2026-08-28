@@ -27,7 +27,7 @@ const WatchlistPage = () => {
   const fetchWatchlist = async (userId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/watchlist/${userId}`
+        `/api/watchlist/${userId}`
       );
       setWatchlist(res.data);
     } catch (err) {
@@ -39,7 +39,7 @@ const WatchlistPage = () => {
 
   const removeFromWatchlist = async (movieId) => {
     try {
-      await axios.post("http://localhost:5000/remove-watchlist", {
+      await axios.post("/api/remove-watchlist", {
         user_id: user.id,
         movie_id: movieId,
       });
