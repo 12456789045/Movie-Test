@@ -12,8 +12,6 @@ import apiConfig from "./../../api/apiConfig";
 import "./hero-slide.scss";
 import { useHistory } from "react-router";
 
-import * as Config from "./../../constants/Config";
-
 const HeroSlide = () => {
   SwiperCore.use([Autoplay]);
 
